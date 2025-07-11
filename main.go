@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -31,23 +32,26 @@ func main() {
 
 	case "list":
 		tasks, _ := loadTasks()
-		fmt.Println("Description", "|", "Status", "|", "Due date")
-		for _, task := range tasks {
-			fmt.Println(task.Description, "|", task.Done, "|", task.DueDate)
+		for i, task := range tasks {
+			status := " "
+			if task.Done {
+				status = "✓"
+			}
+			fmt.Printf("%d. [%s] %s\n", i+1, status, task.Description)
 		}
 
 	case "done":
-		task := os.Args[2]
+		taskId, _ := strconv.Atoi(os.Args[2])
 		tasks, _ := loadTasks()
-		for i := len(tasks) - 1; i >= 0; i-- {
-			if tasks[i].Description == task && tasks[i].Done == false {
+		for i := 0; i <= len(tasks)-1; i++ {
+			if i+1 == taskId && tasks[i].Done == false {
 				tasks[i].Done = true
 				saveTasks(tasks)
 				fmt.Println("Done: ", tasks[i].Description)
 				return
 			}
 		}
-		fmt.Println("Task not found: ", task)
+		fmt.Println("Task not found: ", taskId)
 	}
 
 }
